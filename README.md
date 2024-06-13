@@ -1,2 +1,2 @@
-# paddle-game
-Remake of pong
+# paddle-board
+A mono game for pong-remake
