@@ -8,7 +8,7 @@ namespace MonoGamePaddleBoard.Source
 {
     public class Ball : Sprite
     {
-        
+        public int PaddleCollisionCount { get; set; }
         public enum Direction {
             Up = 0,
             UpRight = 1,
@@ -40,10 +40,6 @@ namespace MonoGamePaddleBoard.Source
                     }
                     else if (r == 1)
                     {
-                        return Direction.Down;
-                    }
-                    else if (r == 2)
-                    {
                         return Direction.DownLeft;
                     }
                     break;
@@ -67,10 +63,6 @@ namespace MonoGamePaddleBoard.Source
                         return Direction.LeftUp;
                     }
                     else if (r == 1)
-                    {
-                        return Direction.Up;
-                    }
-                    else if (r == 2)
                     {
                         return Direction.UpRight;
                     }
@@ -102,13 +94,13 @@ namespace MonoGamePaddleBoard.Source
             if (Position.X == board.LeftWall)
             {
 
-                var n = random.Next(0, 2);
+                var n = random.Next(0, 3);
                 var r = GetRicochet(n, Board.Wall.Left);
                 result = r;
             }
             if (Position.X == board.RightWall)
             {
-                var n = random.Next(0, 2);
+                var n = random.Next(0, 3);
                 var r = GetRicochet(n, Board.Wall.Right);
                 result = r;
             }
@@ -129,14 +121,14 @@ namespace MonoGamePaddleBoard.Source
 
             if (Position.X == paddle.Position.X + paddle.Texture.Width + Texture.Width / 2)
             {
-                var n = random.Next(0, 2);
+                var n = random.Next(0, 3);
                 var r = GetRicochet(n, Board.Wall.Left);
                 result = r;
             }
                 return result;
         }
 
-        public override void RegisterMovement(GameTime gameTime)
+        public override void RegisterMovement(GameTime gameTime, Player player, Ball ball)
         {
             //GenerateRandomDirection();
             if (CurrentDirection == Direction.Up)
