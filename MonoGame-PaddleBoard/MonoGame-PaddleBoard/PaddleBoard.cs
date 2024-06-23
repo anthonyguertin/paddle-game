@@ -6,11 +6,15 @@ using static MonoGamePaddleBoard.Source.Ball;
 using System;
 using System.Threading;
 using MonoGamePaddleBoard;
+using Microsoft.Xna.Framework.Audio;
+using XNAPacMan;
+
+
 
 namespace MonoGame_PaddleBoard
 {
 
-    public class Game1 : Game
+    public class PaddleBoard : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -21,11 +25,16 @@ namespace MonoGame_PaddleBoard
         private Player Player1;
         private Player Player2;
         private SpriteFont SpriteFont1;
+        private SoundEffect PaddleBallSound;
+
+
         private bool Scored { get; set; }
         private bool P1Scored { get; set; }
         private bool P2Scored { get; set; }
         private Vector2 TextSize;
-        public Game1()
+        private Vector2 Settings;
+        private Vector2 SettingsTextSize;
+        public PaddleBoard()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -53,6 +62,7 @@ namespace MonoGame_PaddleBoard
             Player1 = new Player(Paddle1, 1);
             Player2 = new Player(Paddle2);
 
+            //Components.Add(new Menu(this));
             base.Initialize();
         }
 
@@ -62,10 +72,14 @@ namespace MonoGame_PaddleBoard
             Ball.Texture = Content.Load<Texture2D>("ball");
             Paddle1.Texture = Content.Load<Texture2D>("paddle-red");
             Paddle2.Texture = Content.Load<Texture2D>("paddle-green");
+            PaddleBallSound = Content.Load<SoundEffect>("plastic-ball-hit-with-wooden-bat");
             //106 706
             SpriteFont1 = Content.Load<SpriteFont>("font-ariel");
             TextSize = SpriteFont1.MeasureString("Score    ");
             TextSize = new Vector2(TextSize.X / 2, TextSize.Y / 2);
+
+            Settings = new Vector2(5, 5);
+            SettingsTextSize = SpriteFont1.MeasureString("Settings");
 
             Board = new Board(
                 Ball.Texture.Height / 2,
@@ -107,6 +121,12 @@ namespace MonoGame_PaddleBoard
             //Castle Defense
             
             _spriteBatch.Begin();
+            
+            _spriteBatch.DrawString(SpriteFont1,
+                "Settings",
+                new Vector2(5, 5),
+                Color.Red);
+
             _spriteBatch.DrawString(
                 SpriteFont1,
                 $"Score {Player1.Score}:{Player2.Score}",
@@ -166,11 +186,13 @@ namespace MonoGame_PaddleBoard
             var paddleBottom = Paddle1.Position.Y + Paddle1.Texture.Height;
 
             var paddleRight = Paddle1.Position.X + Paddle1.Texture.Width;
-            // For Y
+            // For Paddle 1
             if (paddleRight >= ball.Position.X - ball.Texture.Width/2)
             {
                 if ((paddleTop < ballTop && ballTop < paddleBottom) || (paddleTop < ballBottom && ballBottom < paddleBottom))
                 {
+                    var paddleSound = PaddleBallSound.CreateInstance();
+                    paddleSound.Play();
                     //For X
                     ball.Position.X = Paddle1.Position.X + Paddle1.Texture.Width + Ball.Texture.Width / 2;
                     ball.CurrentDirection = ball.GenerateRandomDirection(Board, Paddle1);
@@ -178,6 +200,28 @@ namespace MonoGame_PaddleBoard
                     ball.Speed += 10f;
                 }
             }
+
+            // For Paddle 2
+            paddleTop = Paddle2.Position.Y;
+            paddleBottom = Paddle2.Position.Y + Paddle2.Texture.Height;
+            var paddleLeft = Paddle2.Position.X;
+            if (paddleLeft <= ball.Position.X + ball.Texture.Width / 2)
+            {
+                if ((paddleTop < ballTop && ballTop < paddleBottom) || (paddleTop < ballBottom && ballBottom < paddleBottom))
+                {
+                    PaddleBallSound.Play();
+                    //For X
+                    ball.Position.X = Paddle2.Position.X - Paddle2.Texture.Width - Ball.Texture.Width / 2;
+                    ball.CurrentDirection = ball.GenerateRandomDirection(Board, Paddle2);
+                    ball.PaddleCollisionCount++;
+                    ball.Speed += 10f;
+                }
+            }
+
+
+
+
+
             var p1Goal = Math.Round(Player1.Paddle.Position.X + Player1.Paddle.Texture.Width, 0, MidpointRounding.AwayFromZero);
             var p2Goal = Math.Round(Player2.Paddle.Position.X, 0, MidpointRounding.AwayFromZero);
             // Passed the paddle

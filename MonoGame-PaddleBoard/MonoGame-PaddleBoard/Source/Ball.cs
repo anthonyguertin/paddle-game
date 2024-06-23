@@ -83,6 +83,25 @@ namespace MonoGamePaddleBoard.Source
                     }
 
                     break;
+                case Board.Wall.None:
+                    if (r == 0)
+                    {
+                        return Direction.UpRight;
+                    }
+                    else if (r == 1)
+                    {
+                        return Direction.Right;
+                    }
+                    else if (r == 2)
+                    {
+                        return Direction.RightDown;
+                    }
+                    else
+                    {
+                        return Direction.All;
+                    }
+
+                    break;
             }
             return 0;
         }
@@ -93,16 +112,19 @@ namespace MonoGamePaddleBoard.Source
             var result = Direction.All;
             if (Position.X == board.LeftWall)
             {
-
                 var n = random.Next(0, 3);
                 var r = GetRicochet(n, Board.Wall.Left);
                 result = r;
+
+                return r;
             }
             if (Position.X == board.RightWall)
             {
                 var n = random.Next(0, 3);
                 var r = GetRicochet(n, Board.Wall.Right);
                 result = r;
+
+                return r;
             }
 
             if (Position.Y == board.TopWall)
@@ -110,6 +132,8 @@ namespace MonoGamePaddleBoard.Source
                 var n = random.Next(0, 2);
                 var r = GetRicochet(n, Board.Wall.Top);
                 result = r;
+
+                return r;
             }
 
             if (Position.Y == board.BottomWall)
@@ -117,6 +141,8 @@ namespace MonoGamePaddleBoard.Source
                 var n = random.Next(0, 2);
                 var r = GetRicochet(n, Board.Wall.Bottom);
                 result = r;
+
+                return r;
             }
 
             if (Position.X == paddle.Position.X + paddle.Texture.Width + Texture.Width / 2)
@@ -124,12 +150,29 @@ namespace MonoGamePaddleBoard.Source
                 var n = random.Next(0, 3);
                 var r = GetRicochet(n, Board.Wall.Left);
                 result = r;
+
+                return r;
             }
+
+            if (Position.X == paddle.Position.X - paddle.Texture.Width - Texture.Width / 2)
+            {
+                var n = random.Next(0, 3);
+                var r = GetRicochet(n, Board.Wall.Right);
+                result = r;
+
+                return r;
+            }
+/* TODO else
+            var all = random.Next(0, 4);
+            var ric = GetRicochet(all, Board.Wall.Right);
+            result = ric;
+*/
                 return result;
         }
 
         public override void RegisterMovement(GameTime gameTime, Player player, Ball ball)
         {
+            
             //GenerateRandomDirection();
             if (CurrentDirection == Direction.Up)
             {

@@ -56,3 +56,9 @@
 /processorParam:TextureFormat=Color
 /build:paddle-red.png
 
+#begin plastic-ball-hit-with-wooden-bat.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:plastic-ball-hit-with-wooden-bat.mp3
+

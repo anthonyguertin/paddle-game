@@ -18,6 +18,7 @@ namespace MonoGamePaddleBoard.Source
         public override void RegisterMovement(GameTime gameTime, Player player, Ball ball)
         {
             var kstate = Keyboard.GetState();
+            var lastKey = kstate.IsKeyDown(Keys.Down);
 
             if (player.Controller != -1)
             {
@@ -36,10 +37,17 @@ namespace MonoGamePaddleBoard.Source
 
             // --- AI
 
-
-
-
-
+            if (ball.Position.Y > Position.Y)
+            {
+                Position.Y += Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            else if (ball.Position.Y < Position.Y)
+            {
+                Position.Y -= Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            } else
+            {
+                // TODO: Whatever else the AI Paddle should do.
+            }
         }
     }
 }

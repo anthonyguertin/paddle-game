@@ -1,3 +1,3 @@
 ﻿
-using var game = new MonoGame_PaddleBoard.Game1();
+using var game = new MonoGame_PaddleBoard.PaddleBoard();
 game.Run();
